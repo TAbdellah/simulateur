@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Réseaux Informatiques - Cours Progressif</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #fff9e6 0%, #ffe6f0 25%, #e6f3ff 50%, #f0e6ff 75%, #fff9e6 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #fff9e6 0%, #ffe6f0 25%, #e6f3ff 50%, #f0e6ff 75%, #fff9e6 100%);
+            color: black;
+            padding: 35px 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 45px;
+        }
+
+        .section h2 {
+            color: #667eea;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 12px;
+        }
+
+        .problem-box {
+            background: linear-gradient(135deg, #fff5e1 0%, #ffe0b2 100%);
+            border-left: 5px solid #ff9800;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .problem-box h3 {
+            color: #e65100;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .problem-box p {
+            color: #555;
+            line-height: 1.7;
+            font-size: 1em;
+        }
+
+        .step-card {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.3em;
+            flex-shrink: 0;
+        }
+
+        .step-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .step-content {
+            color: #555;
+            line-height: 1.7;
+            font-size: 0.95em;
+            margin: 15px 0;
+        }
+
+        .diagram-box {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .diagram-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+
+        .diagram-svg {
+            width: 100%;
+            max-width: 450px;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .equipment-item {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .equipment-image-placeholder {
+            /* width: 120px; */
+            height: 180px;
+            /* background: linear-gradient(135deg, #e0e7ff 0%, #c7d2e8 100%); */
+            /* border: 2px dashed #667eea;
+            border-radius: 8px; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.85em;
+            /* color: #667eea; */
+            text-align: center;
+            padding: 10px;
+        }
+
+        .equipment-content h4 {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .equipment-content p {
+            color: #555;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin: 8px 0;
+        }
+
+        .key-point {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 5px solid #4caf50;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .key-point strong {
+            color: #2e7d32;
+        }
+
+        .comparison-simple {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .comparison-simple strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .topology-item {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .topology-name {
+            color: #667eea;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .topology-svg {
+            width: 100%;
+            max-width: 300px;
+            height: 150px;
+            margin: 15px auto;
+        }
+
+        .topology-desc {
+            color: #555;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+            border-left: 5px solid #ffc107;
+            padding: 18px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .highlight-box strong {
+            color: #f57f17;
+        }
+
+        .footer {
+            background: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.85em;
+            border-top: 2px solid #ddd;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5em;
+            }
+
+            .section h2 {
+                font-size: 1.3em;
+            }
+
+            .equipment-item {
+                flex-direction: column;
+            }
+
+            .equipment-image-placeholder {
+                width: 100%;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+
+          .footer {
+            color: #000;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 60px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+            background: linear-gradient(135deg, #fff9e6 0%, #ffe6f0 25%, #e6f3ff 50%, #f0e6ff 75%, #fff9e6 100%);
+        }
+
+        .footer-content {
+            font-size: 14px;
+            line-height: 1.8;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .footer-author {
+            font-size: 13px;
+            color: #000;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+
+        .footer-heart {
+            color: #ff6b9d;
+            animation: heartbeat 1.5s ease infinite;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.3);
+            }
+
+            50% {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🌐 Les Réseaux Informatiques</h1>
+            <p>Du simple au complexe, pas à pas</p>
+        </header>
+
+        <div class="content">
+
+            <!-- SITUATION PROBLÈME -->
+            <div class="section">
+                <h2>🎯 LA SITUATION PROBLÈME</h2>
+
+                <div class="problem-box">
+                    <h3>En salle informatique, vous remarquez...</h3>
+                    <p>
+                        ✓ L'enseignant envoie un fichier et il arrive sur TOUS les PC en même temps<br>
+                        ✓ Il affiche un message sur vos écrans à distance<br>
+                        ✓ Vous pouvez tous utiliser Internet simultanément<br>
+                        ✓ Tout fonctionne sans voir beaucoup de câbles visibles
+                    </p>
+                </div>
+
+                <div class="problem-box"
+                    style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-left-color: #2196f3;">
+                    <h3 style="color: #1565c0;">❓ Les questions qui se posent:</h3>
+                    <p>
+                        • Comment les ordinateurs se parlent entre eux?<br>
+                        • Qu'est-ce qu'il faut pour connecter 2 PC? Et 3? Et plus?<br>
+                        • Quel est le rôle de chaque équipement?<br>
+                        • Comment les données voyagent?
+                    </p>
+                </div>
+            </div>
+
+            <!-- ÉTAPE 1: UN ORDINATEUR -->
+            <div class="section">
+                <h2>1️⃣ Commençons par UN ordinateur</h2>
+
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Un PC tout seul</div>
+                    </div>
+                    <div class="step-content">
+                        <div class="equipment-image-placeholder" style="text-align: center;">
+                            <img src="https://i.imgur.com/RVm6UoN.jpeg" alt="ordi"
+                                style="width: inherit; height: inherit; object-fit: cover; ">
+                        </div>
+                        Un ordinateur isolé ne peut pas faire grand chose. Pour se connecter à d'autres appareils ou à
+                        Internet, il a besoin d'une <strong>carte réseau</strong>.
+                    </div>
+                </div>
+
+                <div class="equipment-item">
+                    <div class="equipment-image-placeholder">
+                        <img src="https://i.imgur.com/0NreIUp.png" alt="Carte réseau"
+                            style="width: inherit; height: inherit; object-fit: cover; ">
+                    </div>
+                    <div class="equipment-content">
+                        <h4>🖥️ Carte réseau</h4>
+                        <p><strong>Rôle:</strong> Interface qui relie le PC au réseau</p>
+                        <p><strong>Où?</strong> À l'intérieur du PC (intégrée) ou enfichable</p>
+                        <p><strong>Caractéristique:</strong> Chaque carte a une adresse unique (adresse MAC)</p>
+                    </div>
+                </div>
+                Un PC seul = Pas de réseau
+            </div>
+
+            <!-- ÉTAPE 2: DEUX ORDINATEURS -->
+            <div class="section">
+                <h2>2️⃣ Connections DEUX ordinateurs</h2>
+
+                <div class="problem-box">
+                    <h3>Défi: Comment faire communiquer 2 PC?</h3>
+                    <p>On a besoin d'un lien physique entre eux. Deux solutions:</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">A</div>
+                        <div class="step-title">Solution 1: Câble RJ45 (FILAIRE)</div>
+                        <div class="equipment-image-placeholder" style="text-align: center;">
+                            <img src="https://i.imgur.com/B8h4ykp.jpeg" alt="ordi"
+                                style="width: inherit; height: inherit; object-fit: cover; ">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="equipment-item">
+                    <div class="equipment-content">
+                        <h4>📌 Câble RJ45</h4>
+                        <p><strong>Fonction:</strong> Relie les PC directement</p>
+                        <p><strong>Vitesse:</strong> ⭐⭐⭐⭐⭐ Très rapide (jusqu’à 1 Gbps, voire 10 Gbps selon le type)</p>
+                        <p><strong>Avantage:</strong> Stable, pas d'interférences</p>
+                        <p><strong>Inconvénient:</strong> Distance limitée 100 mètres</p>
+                    </div>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">B</div>
+                        <div class="step-title">Solution 2: Wi-Fi (SANS FIL)</div>
+                        <div class="equipment-image-placeholder">
+                            <img src="https://i.imgur.com/dMeZPwV.png"
+                                style="width: inherit; height: inherit; object-fit: cover; " alt="carte Wi-Fi">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="equipment-item">
+
+                    <div class="equipment-content">
+                        <h4>📶 Point d'accès Wi-Fi</h4>
+                        <p><strong>Fonction:</strong> Crée un réseau sans fil</p>
+                        <p><strong>Vitesse:</strong> ⭐⭐⭐ Rapide mais partagé</p>
+                        <p><strong>Avantage:</strong> Pas de câbles, mobilité</p>
+                        <p><strong>Inconvénient:</strong>30 à 100m en extérieur, 10 à 30m en intérieur selon les murs et
+                            obstacles</p>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 3: TROIS ORDINATEURS OU PLUS -->
+                <div class="section">
+                    <h2>3️⃣ Connections TROIS PC ou PLUS</h2>
+
+                    <div class="problem-box">
+                        <h3>Nouveau défi: Connecter 3, 10 ou 30 PC?</h3>
+                        <p>Impossible de faire un câble de chaque PC à chaque autre PC! Il y aurait des milliers de
+                            câbles.
+                            🤯</p>
+                        <p style="margin-top: 12px;"><strong>Solution:</strong> Utiliser un équipement central appelé
+                            <strong>ROUTEUR</strong> (ou SWITCH).
+                        </p>
+                    </div>
+
+                    <div class="equipment-item">
+                        <div class="equipment-image-placeholder">
+                            <img src="https://i.imgur.com/Coi6Qjk.png"
+                                style="width: inherit; height: inherit; object-fit: cover; " alt="carte Wi-Fi">
+                        </div>
+                        <div class="equipment-content">
+                            <h4>🌐 ROUTEUR</h4>
+                            <p><strong>Rôle:</strong> Relie TOUS les PC ensemble. C'est le "chef d'orchestre"</p>
+                            <p><strong>Fonction:</strong> Donne une adresse unique à chaque PC, route les données au bon
+                                endroit</p>
+                            <p><strong>Connexions:</strong> Câbles RJ45 ET Wi-Fi</p>
+                            <p><strong>Bonus:</strong> Relie aussi à Internet</p>
+                        </div>
+                    </div>
+
+                    <div class="equipment-item">
+
+                        <div class="equipment-image-placeholder">
+                            <img src="https://i.imgur.com/oZRGXXp.png"
+                                style="width: inherit; height: inherit; object-fit: cover; " alt="carte Wi-Fi">
+                        </div>
+                        <div class="equipment-content">
+                            <h4>🔌 SWITCH (Commutateur)</h4>
+                            <p><strong>Rôle:</strong> Relie les PC ensemble avec des câbles</p>
+                            <p><strong>Fonction:</strong> Simple distributeur, mais très rapide</p>
+                            <p><strong>Ports:</strong> 4, 8, 16, 24 ou 48 câbles possibles</p>
+                            <p><strong>Différence avec routeur:</strong> N'organise pas, juste relie</p>
+                        </div>
+                    </div>
+
+
+
+                    <div class="key-point">
+                        <strong>✓ Réseau local (LAN):</strong> Tous ces PC connectés au même
+                        <strong>Switch/routeur</strong> forment un
+                        <strong>Réseau Local</strong>. Ils peuvent tous communiquer entre eux!
+                    </div>
+                </div>
+
+                <!-- TOPOLOGIES -->
+                <div class="section">
+                    <div class="video-section">
+                        <div style="text-align: center; margin: 20px 0;">
+                            <a href="https://tabdellah.github.io/simulateur/" target="_blank"
+                                style="display: inline-block; background: #dc3545; color: white; padding: 15px 40px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 1.1em;">
+                                🏗️ Topologies du réseau
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- ÉQUIPEMENTS RÉSUMÉ -->
+                    <div class="section">
+                        <h2>⚙️ LES 6 ÉQUIPEMENTS CLÉS</h2>
+
+                        <table style="width: 100%; border-collapse: collapse; margin: 20px 0; background: white;">
+                            <tr style="background: #667eea;">
+                                <th
+                                    style="color: white; padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 600;">
+                                    Équipement</th>
+                                <th
+                                    style="color: white; padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 600;">
+                                    Rôle</th>
+                                <th
+                                    style="color: white; padding: 12px; text-align: left; border: 1px solid #ddd; font-weight: 600;">
+                                    Image</th>
+                            </tr>
+                            <tr style="background: #f5f5f5;">
+                                <td style="padding: 12px; border: 1px solid #ddd; font-weight: bold;">🖥️ Carte réseau
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">Interface du PC au réseau</td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">
+                                    <div
+                                        style="width: 200px; height: 200px;   display: flex; align-items: center; justify-content: center; font-size: 0.75em; ">
+                                        <img src="https://i.imgur.com/0NreIUp.png" alt="Carte réseau"
+                                            style="width: inherit; height: inherit; ">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #ddd; font-weight: bold;">📌 Câble RJ45</td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">Transport filaire rapide</td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">
+                                    <div
+                                        style="width: 200px; height: 200px;   display: flex; align-items: center; justify-content: center; font-size: 0.75em; ">
+                                        <img src="https://i.imgur.com/B8h4ykp.jpeg" alt="Carte réseau"
+                                            style="width: inherit; object-fit: cover; ">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr style="background: #f5f5f5;">
+                                <td style="padding: 12px; border: 1px solid #ddd; font-weight: bold;">🔌 Switch</td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">Relie les PC ensemble</td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">
+                                    <div
+                                        style="width: 200px; height: 200px;   display: flex; align-items: center; justify-content: center; font-size: 0.75em; ">
+                                        <img src="https://i.imgur.com/oZRGXXp.png" alt="Carte réseau"
+                                            style="width: inherit; height: inherit; object-fit: cover; ">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #ddd; font-weight: bold;">🌐 Routeur</td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">Chef du réseau + Internet</td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">
+                                    <div
+                                        style="width: 200px; height: 200px;   display: flex; align-items: center; justify-content: center; font-size: 0.75em; ">
+                                        <img src="https://i.imgur.com/Coi6Qjk.png" alt="Carte réseau"
+                                            style="width: inherit; height: inherit; object-fit: cover; ">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr style="background: #f5f5f5;">
+                                <td style="padding: 12px; border: 1px solid #ddd; font-weight: bold;">📶 Point d'accès
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">Connexion Wi-Fi sans fil</td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">
+                                    <div
+                                        style="width: 200px; height: 200px;   display: flex; align-items: center; justify-content: center; font-size: 0.75em; ">
+                                        <img src="https://i.imgur.com/dMeZPwV.png" alt="Carte réseau"
+                                            style="width: inherit; height: inherit; object-fit: cover; ">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; border: 1px solid #ddd; font-weight: bold;">📦 Box Internet
+                                </td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">Routeur + Modem (maison)</td>
+                                <td style="padding: 12px; border: 1px solid #ddd;">
+                                    <div
+                                        style="width: 200px; height: 200px;   display: flex; align-items: center; justify-content: center; font-size: 0.75em; ">
+                                        <img src="https://i.imgur.com/vhD1Kp2.png" alt="Carte réseau"
+                                            style="width: inherit; height: inherit; object-fit: cover; ">
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- FINAL -->
+                    <div class="section">
+                        <div class="highlight-box" style="text-align: center; font-size: 1.05em;">
+                            <strong>🎉 Vous avez compris les réseaux informatiques!</strong><br><br>
+                            D'un simple PC à un réseau de 1000 appareils, les principes restent les mêmes:
+                            <br><strong>connecter, organiser, communiquer.</strong>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+            </div>
+
+            <div class="footer">
+                <div class="footer-content">
+                    <strong>© 2025-2026 Tous droits réservés</strong><br>
+                    Académie Régionale de l'Éducation et de la Formation – Région Souss Massa<br>
+                    Direction Provinciale Inzegane Aït Melloul<br>
+                    Collège Othmane Ibn Affane
+                </div>
+                <div class="footer-author">
+                    Conception et réalisation : <strong>Abdellah TAHTOH</strong><br>
+                    Fait avec <span class="footer-heart">❤</span> au service de l'éducation numérique
+                </div>
+            </div>
+</body>
+
+</html>
