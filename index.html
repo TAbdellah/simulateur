@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur Réseau</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffb88c 0%, #ffb3c1 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: black;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel h2 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        .buttons-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .scenarios-section {
+            background: blanchedalmond;
+            border-radius: 10px;
+            padding: 6px;
+            text-align: center;
+        }
+
+        .scenarios-title {
+            color: #ff6b6b;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button {
+            padding: 8px 15px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa94d 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #ff5252 0%, #ff8c3a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .scenario-btn {
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .scenario-btn.active {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa94d 100%);
+            color: black;
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 22px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
+            text-align: center;
+        }
+
+        .canvas-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border: 3px dashed #667eea;
+            border-radius: 10px;
+            position: relative;
+            width: 100%;
+            height: 350px;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 7px;
+        }
+
+        .device-container {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .device-emoji {
+            font-size: 45px;
+            transition: 0.2s;
+            filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.2));
+        }
+
+        .device-container:hover .device-emoji {
+            transform: scale(1.2);
+        }
+
+        .device-container.selected .device-emoji {
+            animation: pulse 0.6s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.3);
+            }
+        }
+
+        .device-ip {
+            font-size: 9px;
+            background: #667eea;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin-top: 3px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .device-name {
+            font-size: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 3px;
+            margin-top: 3px;
+            font-weight: bold;
+            white-space: nowrap;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .stat {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #ff6b6b;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .console {
+            background: #1a1a1a;
+            color: #0f0;
+            padding: 12px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 11px;
+            height: 200px;
+            overflow-y: auto;
+            line-height: 1.4;
+        }
+
+        .log-line {
+            margin: 2px 0;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .log-sent {
+            color: #ff9900;
+        }
+
+        .log-ok {
+            color: #0f0;
+        }
+
+        .log-err {
+            color: #f00;
+        }
+
+        .log-info {
+            color: #0ff;
+        }
+
+        .legend {
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .legend p {
+            margin: 5px 0;
+        }
+
+        .packet {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff9900;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #ff9900;
+            z-index: 100;
+        }
+
+        .footer {
+            color: #000;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 60px;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.2);
+            background: linear-gradient(135deg, #fff9e6 0%, #ffe6f0 25%, #e6f3ff 50%, #f0e6ff 75%, #fff9e6 100%);
+        }
+
+        .footer-content {
+            font-size: 14px;
+            line-height: 1.8;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .footer-author {
+            font-size: 13px;
+            color: #000;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+
+        .footer-heart {
+            color: #ff6b9d;
+            animation: heartbeat 1.5s ease infinite;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            25% {
+                transform: scale(1.3);
+            }
+
+            50% {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🌐 Simulateur de Réseau</h1>
+
+        <div class="grid">
+            <div class="panel">
+                <div class="buttons-group" id="scenarios"></div>
+                <div class="info-box" id="info"></div>
+
+                <div class="canvas-box" id="canvasContainer">
+                    <canvas id="canvas"></canvas>
+                    <div id="devicesLayer"></div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>Statistiques</h2>
+                <div class="stats-grid" id="stats"></div>
+
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <button onclick="clearAll()" style="flex: 1;">Réinitialiser</button>
+                    <button onclick="pingAll()" style="flex: 1;">Ping Tous</button>
+                </div>
+
+                <h3 style="color: #667eea; font-size: 14px; margin-bottom: 10px;">Légende</h3>
+                <div class="legend">
+                    <p>💻 Ordinateur</p>
+                    <p>📱 Téléphone</p>
+                    <p>📺 Smart TV</p>
+                    <p>🔀 Switch</p>
+                    <p>🌐 Routeur</p>
+                    <p>📡 Access Point</p>
+                    <p>🌍 Internet</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Terminal</h2>
+            <div class="console" id="console"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-content">
+            <strong>© 2025-2026 Tous droits réservés</strong><br>
+            Académie Régionale de l'Éducation et de la Formation – Région Souss Massa<br>
+            Direction Provinciale Inzegane Aït Melloul<br>
+            Collège Othmane Ibn Affane
+        </div>
+        <div class="footer-author">
+            Conception et réalisation : <strong>Abdellah TAHTOH</strong><br>
+            Fait avec <span class="footer-heart">❤</span> au service de l'éducation numérique
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('canvasContainer');
+        const devicesLayer = document.getElementById('devicesLayer');
+        const consoleDiv = document.getElementById('console');
+        const infoDiv = document.getElementById('info');
+        const statsDiv = document.getElementById('stats');
+        const scenariosDiv = document.getElementById('scenarios');
+
+        canvas.width = container.offsetWidth;
+        canvas.height = container.offsetHeight;
+
+        let currentScenario = 1;
+        let devices = [];
+        let selectedDevice = null;
+        let stats = { pings: 0, success: 0, fail: 0, avgMs: 0 };
+
+        const scenarios = {
+            1: {
+                name: 'Point-à-Point',
+                desc: 'Deux PC connectés via RJ45',
+                devices: [
+                    { id: 1, x: 100, y: 175, ip: '192.168.1.1', emoji: '💻', name: 'PC 1' },
+                    { id: 2, x: 500, y: 175, ip: '192.168.1.2', emoji: '💻', name: 'PC 2' }
+                ],
+                connections: [[1, 2]]
+            },
+            2: {
+                name: 'LAN avec Switch',
+                desc: '3 ordinateurs + Switch',
+                devices: [
+                    { id: 1, x: 80, y: 100, ip: '192.168.1.1', emoji: '💻', name: 'PC 1' },
+                    { id: 2, x: 80, y: 180, ip: '192.168.1.2', emoji: '💻', name: 'PC 2' },
+                    { id: 3, x: 80, y: 260, ip: '192.168.1.3', emoji: '💻', name: 'PC 3' },
+                    { id: 4, x: 320, y: 180, ip: 'N/A', emoji: '🔀', name: 'Switch' }
+                ],
+                connections: [[1, 4], [2, 4], [3, 4]]
+            },
+            3: {
+                name: 'LAN + Internet',
+                desc: 'Réseau local + Routeur',
+                devices: [
+                    { id: 10, x: 60, y: 80, ip: 'Internet', emoji: '🌍', name: 'Internet' },
+                    { id: 5, x: 200, y: 180, ip: '192.168.1.254', emoji: '🌐', name: 'Routeur' },
+                    { id: 4, x: 340, y: 180, ip: 'N/A', emoji: '🔀', name: 'Switch' },
+                    { id: 1, x: 480, y: 100, ip: '192.168.1.1', emoji: '💻', name: 'PC 1' },
+                    { id: 2, x: 480, y: 180, ip: '192.168.1.2', emoji: '💻', name: 'PC 2' },
+                    { id: 3, x: 480, y: 260, ip: '192.168.1.3', emoji: '💻', name: 'PC 3' }
+                ],
+                connections: [[10, 5], [5, 4], [4, 1], [4, 2], [4, 3]]
+            },
+            4: {
+                name: 'Réseau Mixte',
+                desc: 'Filaire + WiFi',
+                devices: [
+                    { id: 3, x: 80, y: 180, ip: 'N/A', emoji: '🔀', name: 'Switch' },
+                    { id: 1, x: 80, y: 80, ip: '192.168.1.1', emoji: '💻', name: 'PC 1' },
+                    { id: 2, x: 80, y: 280, ip: '192.168.1.2', emoji: '💻', name: 'PC 2' },
+                    { id: 5, x: 260, y: 180, ip: '192.168.1.254', emoji: '🌐', name: 'Routeur' },
+                    { id: 10, x: 340, y: 80, ip: 'Internet', emoji: '🌍', name: 'Internet' },
+                    { id: 4, x: 420, y: 180, ip: '192.168.1.250', emoji: '📡', name: 'AP WiFi' },
+                    { id: 6, x: 420, y: 60, ip: '192.168.1.5', emoji: '💻', name: 'PC Portable' },
+                    { id: 9, x: 500, y: 120, ip: '192.168.1.8', emoji: '📺', name: 'Smart TV' },
+                    { id: 8, x: 420, y: 300, ip: '192.168.1.7', emoji: '📱', name: 'Tel 2' }
+                ],
+                connections: [[1, 3], [2, 3], [3, 5], [10, 5], [5, 4], [6, 4], [9, 4], [8, 4]]
+            },
+            5: {
+                name: 'Topologie en Bus',
+                desc: 'Tous les appareils sur un seul câble',
+                devices: [
+                    { id: 1, x: 100, y: 180, ip: '192.168.1.1', emoji: '💻', name: 'PC 1' },
+                    { id: 2, x: 200, y: 180, ip: '192.168.1.2', emoji: '💻', name: 'PC 2' },
+                    { id: 3, x: 300, y: 180, ip: '192.168.1.3', emoji: '💻', name: 'PC 3' },
+                    { id: 4, x: 400, y: 180, ip: '192.168.1.4', emoji: '💻', name: 'PC 4' }
+                ],
+                connections: [[1, 2], [2, 3], [3, 4]]
+            },
+            6: {
+                name: 'Topologie en Étoile',
+                desc: 'Tous les appareils connectés à un point central',
+                devices: [
+                    { id: 1, x: 80, y: 100, ip: '192.168.1.1', emoji: '💻', name: 'PC 1' },
+                    { id: 2, x: 80, y: 180, ip: '192.168.1.2', emoji: '💻', name: 'PC 2' },
+                    { id: 3, x: 80, y: 260, ip: '192.168.1.3', emoji: '💻', name: 'PC 3' },
+                    { id: 4, x: 320, y: 180, ip: 'N/A', emoji: '🔀', name: 'Switch Central' },
+                    { id: 5, x: 520, y: 100, ip: '192.168.1.4', emoji: '💻', name: 'PC 4' },
+                    { id: 6, x: 520, y: 180, ip: '192.168.1.5', emoji: '💻', name: 'PC 5' },
+                    { id: 7, x: 520, y: 260, ip: '192.168.1.6', emoji: '💻', name: 'PC 6' }
+                ],
+                connections: [[1, 4], [2, 4], [3, 4], [5, 4], [6, 4], [7, 4]]
+            },
+            7: {
+                name: 'Topologie en Anneau',
+                desc: 'Les appareils connectés en boucle fermée',
+                devices: [
+                    { id: 1, x: 300, y: 80, ip: '192.168.1.1', emoji: '💻', name: 'PC 1' },
+                    { id: 2, x: 480, y: 150, ip: '192.168.1.2', emoji: '💻', name: 'PC 2' },
+                    { id: 3, x: 420, y: 280, ip: '192.168.1.3', emoji: '💻', name: 'PC 3' },
+                    { id: 4, x: 180, y: 280, ip: '192.168.1.4', emoji: '💻', name: 'PC 4' },
+                    { id: 5, x: 120, y: 150, ip: '192.168.1.5', emoji: '💻', name: 'PC 5' }
+                ],
+                connections: [[1, 2], [2, 3], [3, 4], [4, 5], [5, 1]]
+            },
+            8: {
+                name: 'Topologie Maillée',
+                desc: 'Chaque appareil connecté à plusieurs autres (redondance)',
+                devices: [
+                    { id: 1, x: 100, y: 100, ip: '192.168.1.1', emoji: '💻', name: 'PC 1' },
+                    { id: 2, x: 300, y: 80, ip: '192.168.1.2', emoji: '💻', name: 'PC 2' },
+                    { id: 3, x: 480, y: 150, ip: '192.168.1.3', emoji: '💻', name: 'PC 3' },
+                    { id: 4, x: 350, y: 280, ip: '192.168.1.4', emoji: '💻', name: 'PC 4' },
+                    { id: 5, x: 120, y: 240, ip: '192.168.1.5', emoji: '💻', name: 'PC 5' }
+                ],
+                connections: [[1, 2], [1, 3], [1, 4], [1, 5], [2, 3], [2, 4], [2, 5], [3, 4], [3, 5], [4, 5]]
+            }
+        };
+
+        function init() {
+            createScenarioButtons();
+            loadScenario(1);
+            updateStats();
+        }
+
+        function createScenarioButtons() {
+            const scenariosContainer = document.getElementById('scenarios');
+            scenariosContainer.innerHTML = '';
+
+            // Section 1: Configurations réalistes
+            const section1 = document.createElement('div');
+            section1.className = 'scenarios-section';
+            const title1 = document.createElement('div');
+            title1.className = 'scenarios-title';
+            title1.textContent = '📋 Configurations Réseau Réalistes';
+            section1.appendChild(title1);
+
+            const group1 = document.createElement('div');
+            group1.className = 'buttons-group';
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'scenario-btn' + (i === 1 ? ' active' : '');
+                btn.textContent = 'Scénario ' + i;
+                btn.onclick = () => selectScenario(i);
+                group1.appendChild(btn);
+            }
+            section1.appendChild(group1);
+            scenariosContainer.appendChild(section1);
+
+            // Section 2: Topologies réseau
+            const section2 = document.createElement('div');
+            section2.className = 'scenarios-section';
+            const title2 = document.createElement('div');
+            title2.className = 'scenarios-title';
+            title2.textContent = '🔗 Topologies Réseau';
+            section2.appendChild(title2);
+
+            const group2 = document.createElement('div');
+            group2.className = 'buttons-group';
+            for (let i = 5; i <= 8; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'scenario-btn';
+                btn.textContent = 'Scénario ' + i;
+                btn.onclick = () => selectScenario(i);
+                group2.appendChild(btn);
+            }
+            section2.appendChild(group2);
+            scenariosContainer.appendChild(section2);
+        }
+
+        function selectScenario(num) {
+            document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            loadScenario(num);
+        }
+
+        function loadScenario(num) {
+            currentScenario = num;
+            devices = JSON.parse(JSON.stringify(scenarios[num].devices));
+            selectedDevice = null;
+            infoDiv.innerHTML = `<strong>${scenarios[num].name}</strong><br>${scenarios[num].desc}`;
+            drawNetwork();
+            renderDevices();
+        }
+
+        function drawNetwork() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = 2;
+
+            const connections = scenarios[currentScenario].connections || [];
+
+            connections.forEach(conn => {
+                const d1 = devices.find(d => d.id === conn[0]);
+                const d2 = devices.find(d => d.id === conn[1]);
+                if (d1 && d2) {
+                    const isWiFi = (conn[0] === 4 || conn[1] === 4) && (currentScenario === 4);
+
+                    if (isWiFi) {
+                        ctx.strokeStyle = 'rgba(66, 133, 244, 1)';
+                        ctx.setLineDash([10, 5]);
+                        ctx.lineWidth = 3;
+                    } else {
+                        ctx.strokeStyle = 'rgba(102, 126, 234, 0.3)';
+                        ctx.setLineDash([]);
+                        ctx.lineWidth = 2;
+                    }
+
+                    ctx.beginPath();
+                    ctx.moveTo(d1.x, d1.y);
+                    ctx.lineTo(d2.x, d2.y);
+                    ctx.stroke();
+                }
+            });
+            ctx.setLineDash([]);
+        }
+
+        function renderDevices() {
+            devicesLayer.innerHTML = '';
+            devices.forEach(d => {
+                const div = document.createElement('div');
+                div.className = 'device-container';
+                div.style.left = d.x + 'px';
+                div.style.top = d.y + 'px';
+                div.style.transform = 'translate(-50%, -50%)';
+                div.dataset.id = d.id;
+
+                div.innerHTML = `
+                    <div class="device-emoji">${d.emoji}</div>
+                    <div class="device-ip">${d.ip}</div>
+                    <div class="device-name">${d.name}</div>
+                `;
+
+                div.addEventListener('click', () => clickDevice(d.id, div));
+                devicesLayer.appendChild(div);
+            });
+        }
+
+        function clickDevice(id, element) {
+            if (selectedDevice === null) {
+                selectedDevice = id;
+                element.classList.add('selected');
+                const d = devices.find(x => x.id === id);
+                log(`🔍 Source: ${d.name}`, 'info');
+            } else if (selectedDevice === id) {
+                element.classList.remove('selected');
+                selectedDevice = null;
+                log('❌ Annulé', 'info');
+            } else {
+                devicesLayer.querySelector(`[data-id="${selectedDevice}"]`).classList.remove('selected');
+                ping(selectedDevice, id);
+                selectedDevice = null;
+            }
+        }
+
+        function ping(from, to) {
+            const d1 = devices.find(x => x.id === from);
+            const d2 = devices.find(x => x.id === to);
+
+            const dist = Math.hypot(d2.x - d1.x, d2.y - d1.y);
+            const ms = Math.round(10 + dist / 5 + Math.random() * 20);
+            const ok = Math.random() > 0.2;
+
+            stats.pings++;
+            log(`📴 PING ${d1.name} → ${d2.name}`, 'sent');
+
+            animatePacket(d1.x, d1.y, d2.x, d2.y);
+
+            setTimeout(() => {
+                if (ok) {
+                    stats.success++;
+                    stats.avgMs = stats.avgMs ? Math.round((stats.avgMs + ms) / 2) : ms;
+                    log(`✅ OK: ${ms}ms`, 'ok');
+                } else {
+                    stats.fail++;
+                    log(`⏱ Timeout`, 'err');
+                }
+                updateStats();
+            }, ms);
+
+            updateStats();
+        }
+
+        function animatePacket(x1, y1, x2, y2) {
+            const pkt = document.createElement('div');
+            pkt.className = 'packet';
+            devicesLayer.appendChild(pkt);
+
+            const start = Date.now();
+            function anim() {
+                const p = Math.min((Date.now() - start) / 700, 1);
+                pkt.style.left = (x1 + (x2 - x1) * p) + 'px';
+                pkt.style.top = (y1 + (y2 - y1) * p) + 'px';
+                pkt.style.opacity = 1 - p;
+                if (p < 1) requestAnimationFrame(anim);
+                else pkt.remove();
+            }
+            anim();
+        }
+
+        function log(msg, type) {
+            const line = document.createElement('div');
+            line.className = 'log-line log-' + type;
+            line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            consoleDiv.appendChild(line);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            if (consoleDiv.children.length > 30) consoleDiv.removeChild(consoleDiv.children[0]);
+        }
+
+        function updateStats() {
+            const pct = stats.pings ? Math.round(stats.success * 100 / stats.pings) : 0;
+            statsDiv.innerHTML = `
+                <div class="stat">
+                    <div class="stat-label">Total</div>
+                    <div class="stat-value">${stats.pings}</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Succès</div>
+                    <div class="stat-value">${stats.success}</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Taux</div>
+                    <div class="stat-value">${pct}%</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-label">Latence</div>
+                    <div class="stat-value">${stats.avgMs} ms</div>
+                </div>
+            `;
+        }
+
+        function clearAll() {
+            stats = { pings: 0, success: 0, fail: 0, avgMs: 0 };
+            consoleDiv.innerHTML = '';
+            updateStats();
+            log('🔄 Réinitialisé', 'info');
+        }
+
+        function pingAll() {
+            devices.forEach((d1, i) => {
+                devices.forEach((d2, j) => {
+                    if (i !== j) {
+                        setTimeout(() => ping(d1.id, d2.id), i * 150 + j * 80);
+                    }
+                });
+            });
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = container.offsetWidth;
+            canvas.height = container.offsetHeight;
+            drawNetwork();
+        });
+
+        init();
+    </script>
+</body>
+
+</html>
